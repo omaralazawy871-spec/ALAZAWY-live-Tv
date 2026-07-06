@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body { margin: 0; background: #000; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
+        #video { width: 100%; max-width: 900px; }
+        .back-btn { position: absolute; top: 20px; left: 20px; padding: 10px 20px; background: #e50914; color: white; text-decoration: none; border-radius: 5px; font-family: Arial; font-weight: bold; z-index: 10;}
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">العودة للقنوات</a>
+    <video id="video" controls autoplay playsinline></video>
+    
+    <script>
+        // استلام رابط البث من الصفحة الرئيسية
+        const params = new URLSearchParams(window.location.search);
+        const originalStreamUrl = params.get('stream');
+
+        if (originalStreamUrl) {
+            // استخدام بروكسي لتشغيل رابط السيرفر (HTTP) داخل موقعك الآمن (HTTPS)
+            const videoSrc = 'https://corsproxy.io/?' + encodeURIComponent(originalStreamUrl);
+            var video = document.getElementById('video');
+            
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = videoSrc;
+                video.play();
+            }
+        }
+    </script>
+</body>
+</html>
